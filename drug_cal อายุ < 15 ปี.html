@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pediatric Drug Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap");
+      body {
+        font-family: "Prompt", sans-serif;
+        background: #f0f2f5;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      table {
+        border-spacing: 0;
+        border: 2px solid #e5e7eb;
+        width: 100%;
+      }
+      td,
+      th {
+        border: 1px solid #e5e7eb;
+        padding: 12px;
+      }
+      .table-container {
+        flex: 1;
+        overflow: auto;
+        margin: 0;
+        padding: 0 16px;
+      }
+      input {
+        width: 100px;
+        height: 50px;
+        text-align: center;
+        margin: 10px;
+        font-size: 30px;
+      }
+      .name-width {
+        min-width: 120px;
+      }
+      .header {
+        background-color: lightseagreen;
+        border-radius: 10px;
+
+        color: white;
+        margin: 16px;
+      }
+      .navbar {
+        background: #333;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background-color: gray;
+        transition: background-color 0.3s;
+      }
+      .navbar a:hover {
+        background-color: #555;
+      }
+      .content-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="content-wrapper">
+      <div class="glass-effect">
+        <h2 class="header text-2xl font-bold">
+          <span class="mr-4" style="font-size: 40px">💊</span>
+          คำนวณขนาดยาเด็ก < 15 ปี
+          <span class="ml-4" style="font-size: 40px">👶🏻</span>
+        </h2>
+
+        <div class="mb-4 flex justify-center items-center space-x-6">
+          <label class="text-2xl font-medium text-gray-700">น้ำหนัก:</label>
+          <input
+            type="number"
+            id="weight"
+            value="3.2"
+            min="0.1"
+            max="100"
+            step="0.1"
+            class="w-32 px-4 py-3 text-xl border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500 focus:border-blue-500"
+            oninput="calculateDoses()"
+            onchange="calculateDoses()"
+            onkeyup="calculateDoses()"
+          />
+          <span class="text-2xl text-gray-700">กิโลกรัม</span>
+        </div>
+
+        <div class="table-container">
+          <table class="bg-white rounded-lg overflow-hidden shadow-lg">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+              >
+                <th class="text-left text-xl name-width">ยา</th>
+                <th class="text-center text-xl" colspan="3">
+                  ขนาดมาตรฐาน (mg/kg/day)
+                </th>
+                <th class="text-center text-xl" colspan="3">
+                  ขนาดยาที่เหมาะสม (mg)
+                </th>
+                <th class="text-center text-xl">ขนาดสูงสุด<br />ต่อวัน (mg)</th>
+              </tr>
+              <tr class="bg-blue-500 text-white">
+                <th></th>
+                <th class="text-center">Min</th>
+                <th class="text-center">Mid</th>
+                <th class="text-center">Max</th>
+                <th class="text-center">Min</th>
+                <th class="text-center">Mid</th>
+                <th class="text-center">Max</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="drugTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <nav class="navbar">
+        <a href="drug_cal อายุ < 15 ปี.html">อายุ < 15</a>
+        <a href="drug_cal อายุ > 15 ปี.html">อายุ > 15 ปี</a>
+      </nav>
+    </div>
+
+    <script>
+      const medications = [
+        {
+          name: "Isoniazid",
+          mkd: { min: 10, mid: 10, max: 15 },
+          maxDaily: 300,
+        },
+        {
+          name: "Rifamicin",
+          mkd: { min: 10, mid: 15, max: 20 },
+          maxDaily: 600,
+        },
+        {
+          name: "Pyrazinamide",
+          mkd: { min: 30, mid: 35, max: 40 },
+          maxDaily: 2000,
+        },
+        {
+          name: "Ethambutol",
+          mkd: { min: 15, mid: 20, max: 25 },
+          maxDaily: 1200,
+        },
+        {
+          name: "Levofloxacin",
+          mkd: { min: 15, mid: 15, max: 20 },
+          maxDaily: 1000,
+        },
+        {
+          name: "Amikacin",
+          mkd: { min: null, mid: 15, max: null },
+          maxDaily: 1000,
+        },
+      ];
+
+      function calculateDose(mkd, weight, maxDaily) {
+        if (!mkd) return "-";
+        const dose = mkd * weight;
+        return dose > maxDaily ? maxDaily : dose.toFixed(1);
+      }
+
+      function calculateDoses() {
+        const weight = document.getElementById("weight").value;
+        const tbody = document.getElementById("drugTable");
+        tbody.innerHTML = "";
+
+        medications.forEach((med, idx) => {
+          const tr = document.createElement("tr");
+          tr.className =
+            idx % 2 === 0 ? "hover:bg-gray-50" : "bg-gray-50 hover:bg-gray-100";
+
+          const doses = {
+            min: calculateDose(med.mkd.min, weight, med.maxDaily),
+            mid: calculateDose(med.mkd.mid, weight, med.maxDaily),
+            max: calculateDose(med.mkd.max, weight, med.maxDaily),
+          };
+
+          const originalDoses = {
+            min: med.mkd.min ? (med.mkd.min * weight).toFixed(1) : "-",
+            mid: med.mkd.mid ? (med.mkd.mid * weight).toFixed(1) : "-",
+            max: med.mkd.max ? (med.mkd.max * weight).toFixed(1) : "-",
+          };
+
+          tr.innerHTML = `
+            <td class="text-xl font-medium">${med.name}</td>
+            <td class="text-center text-xl">${med.mkd.min || "-"}</td>
+            <td class="text-center text-xl">${med.mkd.mid || "-"}</td>
+            <td class="text-center text-xl">${med.mkd.max || "-"}</td>
+            <td class="text-center text-xl ${
+              originalDoses.min > med.maxDaily
+                ? "text-red-600 font-semibold"
+                : ""
+            }">${doses.min}</td>
+            <td class="text-center text-xl ${
+              originalDoses.mid > med.maxDaily
+                ? "text-red-600 font-semibold"
+                : ""
+            }">${doses.mid}</td>
+            <td class="text-center text-xl ${
+              originalDoses.max > med.maxDaily
+                ? "text-red-600 font-semibold"
+                : ""
+            }">${doses.max}</td>
+            <td class="text-center text-xl">${med.maxDaily}</td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      calculateDoses();
+    </script>
+  </body>
+</html>
