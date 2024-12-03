@@ -201,7 +201,7 @@
       }
 
       .display {
-        padding: clamp(20px, 5vw, 30px) clamp(15px, 4vw, 20px);
+        padding: clamp(20px, 5vw, 10px) clamp(15px, 4vw, 10px);
         text-align: right;
         margin-bottom: clamp(15px, 4vw, 20px);
         min-height: clamp(100px, 25vw, 120px);
@@ -236,11 +236,13 @@
         outline: none;
         background-color: var(--theme-btn);
         color: var(--theme-text);
-        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        font-size: clamp(1.5rem, 3vw, 1.5rem);
+        font-weight: bold;
         cursor: pointer;
         border-radius: 40%;
-        width: clamp(50px, 15vw, 70px);
-        height: clamp(50px, 15vw, 70px);
+        width: clamp(60px, 18vw, 80px);
+        height: clamp(60px, 18vw, 80px);
+
         display: flex;
         align-items: center;
         justify-content: center;
@@ -290,7 +292,7 @@
   <body>
     <div class="main-container">
       <div class="calculator-section">
-        <div class="theme-selector">
+        <div class="theme-selector" style="justify-content: center">
           <div
             class="theme-btn"
             style="background-color: #000000"
