@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>เครื่องคิดเลขออนไลน์ ฟรี | คำนวณตัวเลขได้แม่นยำ รวดเร็ว</title>
+    <meta
+      name="title"
+      content="เครื่องคิดเลขออนไลน์ ฟรี | คำนวณตัวเลขได้แม่นยำ รวดเร็ว"
+    />
+    <meta
+      name="description"
+      content="เครื่องคิดเลขออนไลน์ ใช้งานฟรี คำนวณได้ทั้งบวก ลบ คูณ หาร มีฟังก์ชั่นเปอร์เซ็นต์ ใช้งานง่าย รองรับทุกอุปกรณ์ ทั้งมือถือและคอมพิวเตอร์"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Default Theme (Original) */
+        --theme-bg: #000000;
+        --theme-btn: #333333;
+        --theme-operator: #ff9f0a;
+        --theme-function: #a5a5a5;
+        --theme-text: #ffffff;
+      }
+
+      /* Theme Classes */
+      .theme-ocean {
+        --theme-bg: #1a5f7a;
+        --theme-btn: #2d8bac;
+        --theme-operator: #ff9248;
+        --theme-function: #57b8dd;
+        --theme-text: #ffffff;
+      }
+
+      .theme-forest {
+        --theme-bg: #2d5a27;
+        --theme-btn: #458b3e;
+        --theme-operator: #ff6b6b;
+        --theme-function: #71cf68;
+        --theme-text: #ffffff;
+      }
+
+      .theme-sunset {
+        --theme-bg: #cf4307;
+        --theme-btn: #e87248;
+        --theme-operator: #4a90e2;
+        --theme-function: #ffa07a;
+        --theme-text: #ffffff;
+      }
+
+      .theme-candy {
+        --theme-bg: #ff69b4;
+        --theme-btn: #ff99cc;
+        --theme-operator: #00bfff;
+        --theme-function: #ffb6c1;
+        --theme-text: #ffffff;
+      }
+
+      .theme-galaxy {
+        --theme-bg: #2c003e;
+        --theme-btn: #4b0082;
+        --theme-operator: #00ffff;
+        --theme-function: #8a2be2;
+        --theme-text: #ffffff;
+      }
+
+      .theme-golden {
+        --theme-bg: #b8860b;
+        --theme-btn: #daa520;
+        --theme-operator: #4169e1;
+        --theme-function: #f0e68c;
+        --theme-text: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Prompt", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: #f0f2f5;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .theme-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .theme-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .theme-btn.active {
+        border-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transform: scale(1.1);
+      }
+
+      .theme-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .history-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .history-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .history-item:last-child {
+        border-bottom: none;
+      }
+
+      .clear-history {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+
+      /* Desktop and Tablet Layout */
+      @media (min-width: 768px) {
+        .main-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+          align-items: start;
+        }
+
+        .calculator-section {
+          position: sticky;
+          top: 20px;
+        }
+
+        .content-section {
+          order: 2;
+        }
+      }
+
+      /* Mobile Layout */
+      @media (max-width: 767px) {
+        .main-container {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .calculator-section {
+          order: 1;
+        }
+
+        .content-section {
+          order: 2;
+        }
+      }
+
+      .calculator {
+        background-color: var(--theme-bg);
+        padding: clamp(15px, 4vw, 20px);
+        border-radius: 25px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        transition: background-color 0.3s;
+      }
+
+      .display {
+        padding: clamp(20px, 5vw, 30px) clamp(15px, 4vw, 20px);
+        text-align: right;
+        margin-bottom: clamp(15px, 4vw, 20px);
+        min-height: clamp(100px, 25vw, 120px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        word-break: break-all;
+      }
+
+      .previous-operand {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        min-height: 30px;
+        margin-bottom: 10px;
+      }
+
+      .current-operand {
+        color: var(--theme-text);
+        font-size: clamp(2.5rem, 6vw, 3.5rem);
+        font-weight: 300;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: clamp(8px, 2vw, 12px);
+        justify-items: center;
+      }
+
+      button.calc-btn {
+        border: none;
+        outline: none;
+        background-color: var(--theme-btn);
+        color: var(--theme-text);
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        cursor: pointer;
+        border-radius: 40%;
+        width: clamp(50px, 15vw, 70px);
+        height: clamp(50px, 15vw, 70px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: filter 0.2s, background-color 0.3s;
+      }
+
+      button.calc-btn:active {
+        filter: brightness(130%);
+      }
+
+      .operator {
+        background-color: var(--theme-operator) !important;
+      }
+
+      .function {
+        background-color: var(--theme-function) !important;
+        color: black !important;
+      }
+
+      .span-two {
+        grid-column: span 2;
+        width: calc(clamp(50px, 15vw, 70px) * 2 + clamp(8px, 2vw, 12px));
+        border-radius: 35px;
+      }
+
+      @media (max-width: 350px) {
+        .calculator {
+          padding: 10px;
+        }
+
+        .display {
+          padding: 15px 10px;
+        }
+
+        button.calc-btn {
+          width: clamp(45px, 13vw, 50px);
+          height: clamp(45px, 13vw, 50px);
+          font-size: 1.1rem;
+        }
+
+        .span-two {
+          width: calc(clamp(45px, 13vw, 50px) * 2 + 8px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="calculator-section">
+        <div class="theme-selector">
+          <div
+            class="theme-btn"
+            style="background-color: #000000"
+            data-theme="default"
+            title="Original"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #1a5f7a"
+            data-theme="ocean"
+            title="Ocean"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #2d5a27"
+            data-theme="forest"
+            title="Forest"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #cf4307"
+            data-theme="sunset"
+            title="Sunset"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #ff69b4"
+            data-theme="candy"
+            title="Candy"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #2c003e"
+            data-theme="galaxy"
+            title="Galaxy"
+          ></div>
+          <div
+            class="theme-btn"
+            style="background-color: #b8860b"
+            data-theme="golden"
+            title="Golden"
+          ></div>
+        </div>
+
+        <div class="calculator">
+          <div class="display">
+            <div class="previous-operand"></div>
+            <div class="current-operand">0</div>
+          </div>
+          <div class="buttons">
+            <button class="calc-btn function" onclick="clearDisplay()">
+              AC
+            </button>
+            <button class="calc-btn function" onclick="changeSign()">
+              +/-
+            </button>
+            <button class="calc-btn function" onclick="percentage()">%</button>
+            <button class="calc-btn operator" onclick="setOperation('÷')">
+              ÷
+            </button>
+
+            <button class="calc-btn" onclick="appendNumber('7')">7</button>
+            <button class="calc-btn" onclick="appendNumber('8')">8</button>
+            <button class="calc-btn" onclick="appendNumber('9')">9</button>
+            <button class="calc-btn operator" onclick="setOperation('×')">
+              ×
+            </button>
+
+            <button class="calc-btn" onclick="appendNumber('4')">4</button>
+            <button class="calc-btn" onclick="appendNumber('5')">5</button>
+            <button class="calc-btn" onclick="appendNumber('6')">6</button>
+            <button class="calc-btn operator" onclick="setOperation('-')">
+              -
+            </button>
+
+            <button class="calc-btn" onclick="appendNumber('1')">1</button>
+            <button class="calc-btn" onclick="appendNumber('2')">2</button>
+            <button class="calc-btn" onclick="appendNumber('3')">3</button>
+            <button class="calc-btn operator" onclick="setOperation('+')">
+              +
+            </button>
+
+            <button class="calc-btn span-two" onclick="appendNumber('0')">
+              0
+            </button>
+            <button class="calc-btn" onclick="appendDecimal()">.</button>
+            <button class="calc-btn operator" onclick="calculate()">=</button>
+          </div>
+        </div>
+
+        <div class="history-container">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="m-0">ประวัติการคำนวณ</h3>
+            <button class="clear-history" onclick="clearHistory()">
+              ล้างประวัติ
+            </button>
+          </div>
+          <div id="history-list"></div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="seo-content">
+          <h1>เครื่องคิดเลขออนไลน์ ฟรี - คำนวณได้แม่นยำ รวดเร็ว</h1>
+          <p>
+            ใช้งานเครื่องคิดเลขออนไลน์ฟรี รองรับการคำนวณทั้งการบวก ลบ คูณ หาร
+            พร้อมฟังก์ชั่นพิเศษสำหรับการคำนวณเปอร์เซ็นต์ ใช้งานง่าย สะดวก
+            รวดเร็ว
+          </p>
+
+          <h2>ฟีเจอร์เด่นของเครื่องคิดเลขออนไลน์</h2>
+          <ul class="features-list">
+            <li>ใช้งานฟรี ไม่มีค่าใช้จ่าย</li>
+            <li>รองรับการคำนวณพื้นฐาน บวก ลบ คูณ หาร</li>
+            <li>มีฟังก์ชั่นคำนวณเปอร์เซ็นต์</li>
+            <li>สลับเครื่องหมาย บวก/ลบ ได้</li>
+            <li>แสดงประวัติการคำนวณ</li>
+            <li>ใช้งานได้ทั้งบนมือถือและคอมพิวเตอร์</li>
+            <li>รองรับการใช้งานผ่านแป้นพิมพ์</li>
+          </ul>
+
+          <h2>วิธีใช้งานเครื่องคิดเลขออนไลน์</h2>
+          <p>
+            เครื่องคิดเลขออนไลน์ของเราใช้งานง่าย
+            เพียงคลิกที่ตัวเลขและเครื่องหมายที่ต้องการคำนวณ
+            หรือใช้แป้นพิมพ์ในการป้อนตัวเลขได้โดยตรง สามารถกดปุ่ม = หรือ Enter
+            เพื่อคำนวณผลลัพธ์
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentOperand = "0";
+      let previousOperand = "";
+      let operation = null;
+      let shouldResetScreen = false;
+      let calculationHistory = [];
+
+      // Load saved theme and history from localStorage
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("calculatorTheme") || "default";
+        setTheme(savedTheme);
+
+        const savedHistory = localStorage.getItem("calculationHistory");
+        if (savedHistory) {
+          calculationHistory = JSON.parse(savedHistory);
+          updateHistoryDisplay();
+        }
+
+        // Set active theme button
+        const activeThemeBtn = document.querySelector(
+          `[data-theme="${savedTheme}"]`
+        );
+        if (activeThemeBtn) {
+          activeThemeBtn.classList.add("active");
+        }
+      });
+
+      // Theme selector
+      document.querySelectorAll(".theme-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".theme-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          setTheme(btn.dataset.theme);
+        });
+      });
+
+      function setTheme(theme) {
+        const calculator = document.querySelector(".calculator");
+        calculator.className = "calculator theme-" + theme;
+        localStorage.setItem("calculatorTheme", theme);
+      }
+
+      const currentOperandDisplay = document.querySelector(".current-operand");
+      const previousOperandDisplay =
+        document.querySelector(".previous-operand");
+
+      function updateDisplay() {
+        currentOperandDisplay.textContent = currentOperand;
+        previousOperandDisplay.textContent = previousOperand;
+      }
+
+      function clearDisplay() {
+        currentOperand = "0";
+        previousOperand = "";
+        operation = null;
+        updateDisplay();
+      }
+
+      function appendNumber(number) {
+        if (shouldResetScreen) {
+          currentOperand = "0";
+          shouldResetScreen = false;
+        }
+        if (currentOperand === "0" && number !== "0") {
+          currentOperand = number;
+        } else if (currentOperand !== "0") {
+          currentOperand += number;
+        }
+        updateDisplay();
+      }
+
+      function appendDecimal() {
+        if (shouldResetScreen) {
+          currentOperand = "0";
+          shouldResetScreen = false;
+        }
+        if (!currentOperand.includes(".")) {
+          currentOperand += ".";
+        }
+        updateDisplay();
+      }
+
+      function setOperation(operator) {
+        if (operation !== null) calculate();
+        operation = operator;
+        previousOperand = `${currentOperand} ${operation}`;
+        shouldResetScreen = true;
+        updateDisplay();
+      }
+
+      function changeSign() {
+        currentOperand = (parseFloat(currentOperand) * -1).toString();
+        updateDisplay();
+      }
+
+      function percentage() {
+        currentOperand = (parseFloat(currentOperand) / 100).toString();
+        updateDisplay();
+      }
+
+      function addToHistory(calculation, result) {
+        calculationHistory.unshift({ calculation, result });
+        if (calculationHistory.length > 10) {
+          // Keep only last 10 calculations
+          calculationHistory.pop();
+        }
+        localStorage.setItem(
+          "calculationHistory",
+          JSON.stringify(calculationHistory)
+        );
+        updateHistoryDisplay();
+      }
+
+      function updateHistoryDisplay() {
+        const historyList = document.getElementById("history-list");
+        historyList.innerHTML = calculationHistory
+          .map(
+            (item) => `
+          <div class="history-item">
+            <span>${item.calculation} = ${item.result}</span>
+             
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function useResult(result) {
+        currentOperand = result;
+        updateDisplay();
+      }
+
+      function clearHistory() {
+        calculationHistory = [];
+        localStorage.removeItem("calculationHistory");
+        updateHistoryDisplay();
+      }
+
+      function calculate() {
+        if (operation === null || shouldResetScreen) return;
+
+        const prev = parseFloat(previousOperand);
+        const current = parseFloat(currentOperand);
+        let computation;
+
+        switch (operation) {
+          case "+":
+            computation = prev + current;
+            break;
+          case "-":
+            computation = prev - current;
+            break;
+          case "×":
+            computation = prev * current;
+            break;
+          case "÷":
+            computation = prev / current;
+            break;
+          default:
+            return;
+        }
+
+        // Add to history
+        const calculation = `${previousOperand} ${currentOperand}`;
+        const result = computation.toString();
+        addToHistory(calculation, result);
+
+        currentOperand = result;
+        operation = null;
+        previousOperand = "";
+        shouldResetScreen = true;
+        updateDisplay();
+      }
+
+      // Keyboard support
+      document.addEventListener("keydown", (event) => {
+        if (event.key >= "0" && event.key <= "9") appendNumber(event.key);
+        if (event.key === ".") appendDecimal();
+        if (event.key === "=" || event.key === "Enter") calculate();
+        if (event.key === "Backspace") clearDisplay();
+        if (event.key === "+") setOperation("+");
+        if (event.key === "-") setOperation("-");
+        if (event.key === "*") setOperation("×");
+        if (event.key === "/") {
+          event.preventDefault();
+          setOperation("÷");
+        }
+      });
+    </script>
+  </body>
+</html>
