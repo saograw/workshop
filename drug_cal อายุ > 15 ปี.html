@@ -3,162 +3,240 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Drug Calculator อายุ > 15 ปี</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <title>คำนวณขนาดยา >= 15 ปี</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap");
-      body {
-        font-family: "Prompt", sans-serif;
-        background: #f0f2f5;
-        text-align: center;
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
+        font-family: "Prompt", -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --primary: #8a2be2;
+        --primary-dark: #7126b5;
+        --bg-color: #f0f2f5;
+        --text-color: #2c3e50;
+        --text-light: #7f8c8d;
+        --card-bg: #fff;
+        --border-radius: 12px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        overflow-x: hidden;
       }
-      .glass-effect {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+
+      .container {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin: 12px;
+        overflow: hidden;
         flex: 1;
-        display: flex;
-        flex-direction: column;
       }
-      table {
-        border-spacing: 0;
-        border: 2px solid #e5e7eb;
-        width: 100%;
-      }
-      td,
-      th {
-        border: 1px solid #e5e7eb;
-        padding: 12px;
-      }
-      .table-container {
-        flex: 1;
-        overflow: auto;
-        margin: 0;
-        padding: 0 16px;
-      }
-      input {
-        width: 100px;
-        height: 50px;
-        text-align: center;
-        margin: 10px;
-        font-size: 30px;
-      }
+
       .header {
-        background-color: blueviolet;
-        border-radius: 10px;
+        background: var(--primary);
         color: white;
-        margin: 16px 16px 0 16px;
+        padding: 16px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
+
+      .weight-input {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      input[type="number"] {
+        width: 100px;
+        height: 48px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 24px;
+        color: var(--primary);
+        background: white;
+        -moz-appearance: textfield;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin: 0 12px 12px 12px;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 12px 8px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        min-width: 60px;
+      }
+
+      td:first-child {
+        text-align: left;
+        font-weight: 500;
+        min-width: 120px;
+      }
+
+      td:last-child {
+        text-align: left;
+        min-width: 180px;
+      }
+
+      th {
+        background: var(--primary);
+        color: white;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      tr:nth-child(even) {
+        background: #f8fafc;
+      }
+
+      .warning {
+        color: #e53e3e;
+        font-weight: 600;
+      }
+
+      .note {
+        color: var(--text-light);
+        font-size: 13px;
+      }
+
       .navbar {
-        background: #333;
-        padding: 1rem;
+        background: #334155;
+        padding: 12px;
         display: flex;
         justify-content: center;
-        gap: 2rem;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        gap: 12px;
       }
-      .navbar a {
+
+      .nav-link {
         color: white;
         text-decoration: none;
-        padding: 0.5rem 1rem;
+        padding: 8px 16px;
         border-radius: 20px;
-        background-color: gray;
-        transition: background-color 0.3s;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 14px;
+        transition: all 0.3s ease;
       }
-      .navbar a:hover {
-        background-color: #555;
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.2);
       }
-      .content-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 0;
-        margin: 0;
+
+      @media (max-width: 768px) {
+        .header {
+          font-size: 18px;
+          padding: 12px;
+        }
+
+        th,
+        td {
+          padding: 8px 4px;
+          font-size: 13px;
+        }
+
+        .weight-input {
+          font-size: 16px;
+        }
+
+        td:last-child {
+          min-width: 140px;
+        }
       }
     </style>
   </head>
-  <body class="bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="content-wrapper">
-      <div class="glass-effect">
-        <h2 class="header text-2xl font-bold">
-          <span class="mr-4" style="font-size: 40px">💊</span>
-          คำนวณขนาดยา อายุ >= 15 ปี
-        </h2>
-
-        <div class="mb-4 flex justify-center items-center space-x-6">
-          <label class="text-xl font-medium text-gray-700">น้ำหนัก:</label>
-          <input
-            type="number"
-            id="weight"
-            value="70"
-            min="1"
-            max="200"
-            class="w-32 px-4 py-3 text-xl border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500 focus:border-blue-500"
-            oninput="calculateDoses()"
-            onchange="calculateDoses()"
-            onkeyup="calculateDoses()"
-          />
-          <span class="text-xl text-gray-700">กิโลกรัม</span>
-        </div>
-
-        <div class="table-container">
-          <table class="bg-white rounded-lg overflow-hidden shadow-lg">
-            <thead>
-              <tr
-                class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-              >
-                <th
-                  class="text-left text-lg"
-                  rowspan="2"
-                  style="min-width: 160px"
-                >
-                  ยา
-                </th>
-                <th class="text-center text-lg" colspan="3">
-                  ขนาดมาตรฐาน (mg/kg/day)
-                </th>
-                <th class="text-center text-lg" colspan="3">
-                  ขนาดยาที่เหมาะสม (mg)
-                </th>
-                <th
-                  class="text-center text-lg"
-                  rowspan="2"
-                  style="min-width: 120px"
-                >
-                  ขนาดสูงสุด<br />ต่อวัน (mg)
-                </th>
-                <th
-                  class="text-left text-lg"
-                  rowspan="2"
-                  style="min-width: 240px"
-                >
-                  หมายเหตุ
-                </th>
-              </tr>
-              <tr class="bg-blue-500 text-white">
-                <th class="text-center">Min</th>
-                <th class="text-center">Mid</th>
-                <th class="text-center">Max</th>
-                <th class="text-center">Min</th>
-                <th class="text-center">Mid</th>
-                <th class="text-center">Max</th>
-              </tr>
-            </thead>
-            <tbody id="drugTable"></tbody>
-          </table>
-        </div>
+  <body>
+    <div class="container">
+      <div class="header">
+        <span style="font-size: 24px">💊</span>
+        คำนวณขนาดยา อายุ >= 15 ปี
       </div>
 
-      <nav class="navbar">
-        <a href="drug_cal อายุ < 15 ปี.html">อายุ < 15</a>
-        <a href="drug_cal อายุ > 15 ปี.html">อายุ > 15 ปี</a>
-      </nav>
+      <div class="weight-input">
+        <label>น้ำหนัก:</label>
+        <input
+          type="number"
+          id="weight"
+          value="70"
+          min="1"
+          max="200"
+          step="1"
+          oninput="calculateDoses()"
+        />
+        <span>กิโลกรัม</span>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">ยา</th>
+              <th colspan="3">ขนาดมาตรฐาน<br />(mg/kg/day)</th>
+              <th colspan="3">ขนาดยาที่เหมาะสม<br />(mg)</th>
+              <th rowspan="2">ขนาดสูงสุด<br />ต่อวัน (mg)</th>
+              <th rowspan="2">หมายเหตุ</th>
+            </tr>
+            <tr>
+              <th>Min</th>
+              <th>Mid</th>
+              <th>Max</th>
+              <th>Min</th>
+              <th>Mid</th>
+              <th>Max</th>
+            </tr>
+          </thead>
+          <tbody id="drugTable"></tbody>
+        </table>
+      </div>
     </div>
+
+    <nav class="navbar">
+      <a href="drug_cal อายุ < 15 ปี.html" class="nav-link">อายุ < 15</a>
+      <a href="drug_cal อายุ > 15 ปี.html" class="nav-link">อายุ > 15 ปี</a>
+    </nav>
 
     <script>
       const medications = [
@@ -211,10 +289,8 @@
         const tbody = document.getElementById("drugTable");
         tbody.innerHTML = "";
 
-        medications.forEach((med, idx) => {
+        medications.forEach((med) => {
           const tr = document.createElement("tr");
-          tr.className =
-            idx % 2 === 0 ? "hover:bg-gray-50" : "bg-gray-50 hover:bg-gray-100";
 
           const doses = {
             min: calculateDose(med.mkd.min, weight, med.maxDaily),
@@ -229,28 +305,27 @@
           };
 
           tr.innerHTML = `
-            <td class="text-lg">${med.name}</td>
-            <td class="text-center text-lg">${med.mkd.min || "-"}</td>
-            <td class="text-center text-lg">${med.mkd.mid || "-"}</td>
-            <td class="text-center text-lg">${med.mkd.max || "-"}</td>
-            <td class="text-center text-lg font-medium ${
-              originalDoses.min > med.maxDaily ? "text-red-600" : ""
-            }">${doses.min}</td>
-            <td class="text-center text-lg font-medium ${
-              originalDoses.mid > med.maxDaily ? "text-red-600" : ""
-            }">${doses.mid}</td>
-            <td class="text-center text-lg font-medium ${
-              originalDoses.max > med.maxDaily ? "text-red-600" : ""
-            }">${doses.max}</td>
-            <td class="text-center text-lg">${med.maxDaily}</td>
-            <td class="text-lg text-gray-600">${med.note}</td>
-          `;
+                    <td>${med.name}</td>
+                    <td>${med.mkd.min || "-"}</td>
+                    <td>${med.mkd.mid || "-"}</td>
+                    <td>${med.mkd.max || "-"}</td>
+                    <td class="${
+                      originalDoses.min > med.maxDaily ? "warning" : ""
+                    }">${doses.min}</td>
+                    <td class="${
+                      originalDoses.mid > med.maxDaily ? "warning" : ""
+                    }">${doses.mid}</td>
+                    <td class="${
+                      originalDoses.max > med.maxDaily ? "warning" : ""
+                    }">${doses.max}</td>
+                    <td>${med.maxDaily}</td>
+                    <td class="note">${med.note}</td>
+                `;
 
           tbody.appendChild(tr);
         });
       }
 
-      // Initial calculation
       calculateDoses();
     </script>
   </body>
