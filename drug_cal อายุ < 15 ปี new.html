@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>คำนวณขนาดยาเด็ก</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Prompt", -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --primary: #20b2aa;
+        --primary-dark: #1a8f89;
+        --bg-color: #f0f2f5;
+        --text-color: #2c3e50;
+        --text-light: #7f8c8d;
+        --card-bg: #fff;
+        --border-radius: 12px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .container {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin: 12px;
+        overflow: hidden;
+        flex: 1;
+      }
+
+      .header {
+        background: var(--primary);
+        color: white;
+        padding: 16px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .weight-input {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      input[type="number"] {
+        width: 100px;
+        height: 48px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 24px;
+        color: var(--primary);
+        background: white;
+        -moz-appearance: textfield;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.2);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin: 0 12px 12px 12px;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 12px 8px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+      }
+
+      th {
+        background: var(--primary);
+        color: white;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      tr:nth-child(even) {
+        background: #f8fafc;
+      }
+
+      td:first-child {
+        text-align: left;
+        font-weight: 500;
+        min-width: 120px;
+      }
+
+      .warning {
+        color: #e53e3e;
+        font-weight: 600;
+      }
+
+      .navbar {
+        background: #334155;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      @media (max-width: 640px) {
+        .header {
+          font-size: 18px;
+          padding: 12px;
+        }
+
+        th,
+        td {
+          padding: 8px 4px;
+          font-size: 13px;
+        }
+
+        .weight-input {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <span style="font-size: 24px">💊</span>
+        คำนวณขนาดยาเด็ก < 15 ปี
+        <span style="font-size: 24px">👶🏻</span>
+      </div>
+
+      <div class="weight-input">
+        <label>น้ำหนัก:</label>
+        <input
+          type="number"
+          id="weight"
+          value="3.2"
+          min="0.1"
+          max="100"
+          step="0.1"
+          oninput="calculateDoses()"
+        />
+        <span>กิโลกรัม</span>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">ยา</th>
+              <th colspan="3">ขนาดมาตรฐาน<br />(mg/kg/day)</th>
+              <th colspan="3">ขนาดยาที่เหมาะสม<br />(mg)</th>
+              <th rowspan="2">ขนาดสูงสุด<br />ต่อวัน (mg)</th>
+            </tr>
+            <tr>
+              <th>Min</th>
+              <th>Mid</th>
+              <th>Max</th>
+              <th>Min</th>
+              <th>Mid</th>
+              <th>Max</th>
+            </tr>
+          </thead>
+          <tbody id="drugTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <a href="drug_cal อายุ < 15 ปี.html" class="nav-link">อายุ < 15</a>
+      <a href="drug_cal อายุ > 15 ปี.html" class="nav-link">อายุ > 15 ปี</a>
+    </nav>
+
+    <script>
+      const medications = [
+        {
+          name: "Isoniazid",
+          mkd: { min: 10, mid: 10, max: 15 },
+          maxDaily: 300,
+        },
+        {
+          name: "Rifamicin",
+          mkd: { min: 10, mid: 15, max: 20 },
+          maxDaily: 600,
+        },
+        {
+          name: "Pyrazinamide",
+          mkd: { min: 30, mid: 35, max: 40 },
+          maxDaily: 2000,
+        },
+        {
+          name: "Ethambutol",
+          mkd: { min: 15, mid: 20, max: 25 },
+          maxDaily: 1200,
+        },
+        {
+          name: "Levofloxacin",
+          mkd: { min: 15, mid: 15, max: 20 },
+          maxDaily: 1000,
+        },
+        {
+          name: "Amikacin",
+          mkd: { min: null, mid: 15, max: null },
+          maxDaily: 1000,
+        },
+      ];
+
+      function calculateDose(mkd, weight, maxDaily) {
+        if (!mkd) return "-";
+        const dose = mkd * weight;
+        return dose > maxDaily ? maxDaily : dose.toFixed(1);
+      }
+
+      function calculateDoses() {
+        const weight = document.getElementById("weight").value;
+        const tbody = document.getElementById("drugTable");
+        tbody.innerHTML = "";
+
+        medications.forEach((med, idx) => {
+          const tr = document.createElement("tr");
+
+          const doses = {
+            min: calculateDose(med.mkd.min, weight, med.maxDaily),
+            mid: calculateDose(med.mkd.mid, weight, med.maxDaily),
+            max: calculateDose(med.mkd.max, weight, med.maxDaily),
+          };
+
+          const originalDoses = {
+            min: med.mkd.min ? (med.mkd.min * weight).toFixed(1) : "-",
+            mid: med.mkd.mid ? (med.mkd.mid * weight).toFixed(1) : "-",
+            max: med.mkd.max ? (med.mkd.max * weight).toFixed(1) : "-",
+          };
+
+          tr.innerHTML = `
+                    <td>${med.name}</td>
+                    <td>${med.mkd.min || "-"}</td>
+                    <td>${med.mkd.mid || "-"}</td>
+                    <td>${med.mkd.max || "-"}</td>
+                    <td class="${
+                      originalDoses.min > med.maxDaily ? "warning" : ""
+                    }">${doses.min}</td>
+                    <td class="${
+                      originalDoses.mid > med.maxDaily ? "warning" : ""
+                    }">${doses.mid}</td>
+                    <td class="${
+                      originalDoses.max > med.maxDaily ? "warning" : ""
+                    }">${doses.max}</td>
+                    <td>${med.maxDaily}</td>
+                `;
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      calculateDoses();
+    </script>
+  </body>
+</html>
